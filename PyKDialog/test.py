@@ -1,6 +1,10 @@
 import os
 
 from PyKDialog.kdialog import KDialog
+from PyKDialog.kdialog_option import KDialogOptionsBuilder
+
+print(KDialog.__doc__)
+print(help(KDialogOptionsBuilder().add_option))
 
 # kdialog1 = KDialog() \
 #     .combo_box("Choose your fav food", ["Pizza", "Burger", "Chicken"]) \
@@ -21,9 +25,9 @@ from PyKDialog.kdialog import KDialog
 
 #kdialog1 = KDialog().check_list("Choose", {"test": "on", "test2": "off", "test3": "on"})
 #kdialog1 = KDialog().notification("Well done!", 5)
-kdialog1 = KDialog().icon("firefox")
-
-cmd = kdialog1.get_cmd()
-
-print(cmd)
-os.system(cmd)
+# kdialog1 = KDialog().icon("firefox")
+#
+# cmd = kdialog1.build()
+#
+# print(cmd)
+# os.system(cmd)
