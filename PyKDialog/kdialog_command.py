@@ -1,9 +1,9 @@
+from copy import deepcopy
 from enum import Enum
 
 
 class KDialogCommand(Enum):
-    """Command that can take multiple arguments and specifies which type of dialog is used.
-    """
+    """Command that can take multiple arguments and specifies which type of dialog is used."""
     YES_NO = "--yesno"
     YES_NO_CANCEL = "--yesnocancel"
     WARNING_YES_NO = "--warningyesno"
@@ -48,26 +48,40 @@ class KDialogCommand(Enum):
 
 
 class KDialogCommandBuilder(object):
-    """Used to build the command with its arguments.
-    """
+    """Used to build the command with its arguments."""
 
     def __init__(self, cmd: KDialogCommand, args: list) -> None:
-        """
-        Initializes the builder with the specified command and arguments
-        Args:
-            cmd (KDialogCommand): the actual kdialog command.
-            args (list): the arguments for the command.
+        """Initializes the builder with the specified command and arguments
+        :param cmd: the actual kdialog command.
+        :type cmd: KDialogCommand
+        :param args: the arguments for the command.
+        :type args: list
         """
         self.__kdialog_command: KDialogCommand = cmd
         self.__args: list = args
 
-    def build(self) -> str:
+    @property
+    def kdialog_command(self) -> KDialogCommand:
+        """Getter of the command.
+        :return: the command of the builder.
+        :rtype: KDialogCommand
         """
-        Creates a string with the command and the arguments.
-        Returns:
-            the command fragment of the complete kdialog string.
+        return self.__kdialog_command
+
+    @property
+    def args(self) -> list:
+        """Readonly copy of the Builders current command args.
+        :return: the args of the command.
+        :rtype: list
         """
-        cmd = self.__kdialog_command.value
-        for arg in self.__args:
-            cmd += f' "{arg}"'
-        return cmd
+        return deepcopy(self.__args)
+
+    def build(self) -> list:
+        """Creates an args list with the command and the arguments.
+
+        :returns: args list fragment of the complete kdialog string.
+        :rtype: list
+        """
+        cmd_args = [self.__kdialog_command.value]
+        cmd_args.extend(self.__args)
+        return cmd_args

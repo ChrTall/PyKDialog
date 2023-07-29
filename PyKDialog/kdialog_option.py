@@ -1,9 +1,9 @@
 from enum import Enum
+from copy import deepcopy
 
 
 class KDialogOption(Enum):
-    """Optional Flag that can be added to kdialog cmds.
-    """
+    """Optional Flag that can be added to kdialog cmds."""
     TITLE = "--title"
     """
     Customize the Dialog title.
@@ -44,22 +44,29 @@ class KDialogOption(Enum):
 
 
 class KDialogOptionsBuilder(object):
-    """Used to customize the optional flags of the KDialog Commands.
-    """
+    """Used to customize the optional flags of the KDialog Commands."""
 
     def __init__(self) -> None:
         """Initializes the Builder without any options.
         """
         self.__options: dict = {}
 
+    @property
+    def options(self) -> dict:
+        """Readonly copy of the Builders current options.
+        :return: a copy of the Builders current options.
+        :rtype: dict
+        """
+        return deepcopy(self.__options)
+
     def add_option(self, option: KDialogOption, val: str) -> None:
         """Adds the given option to the builder.
 
-        Args:
-            option (KDialogOption): The option/flag that should be added to the builder.
-            val (str): The value of the option/flag
-        Raises:
-            TypeError: if the provided option is not a valid KDialogOption Enum.
+        :param option: The option/flag that is added to the builder.
+        :type option: KDialogOption
+        :param val: the value of the option/flag
+        :type val: str
+        :raises TypeError: if the provided option is not a valid KDialogOption Enum.
         """
         if not isinstance(option, KDialogOption):
             raise TypeError(f"option: {option} is not a valid KDialogOption Enum!")
@@ -68,22 +75,21 @@ class KDialogOptionsBuilder(object):
     def remove_option(self, option: KDialogOption) -> None:
         """Removes the given option from the builder.
 
-        Args:
-            option (KDialogOption): The option/flag that should be removed from the builder.
-        Raises:
-            TypeError: if the provided option is not a valid KDialogOption Enum.
+        :param option: the option/flag that is removed.
+        :type option: KDialogOption
+        :raises TypeError: if the provided option is not a valid KDialogOption Enum.
         """
         if not isinstance(option, KDialogOption):
             raise TypeError(f"option: {option} is not a valid KDialogOption Enum!")
         self.__options.pop(option)
 
-    def build(self) -> str:
-        """All added options with their values are combined into a string.
-        The string is a fragment of the complete kdialog cmd.
-        Returns:
-             The optional parameters fragment of the kdialog cmd.
+    def build(self) -> list:
+        """All added options with their values are combined into an args list.
+
+        :returns: The optional parameters args list of the kdialog cmd.
+        :rtype: list
         """
-        options = ''
+        options = []
         for option, value in self.__options.items():
-            options += f' {option.value} "{value}"'
+            options.extend([option.value, value])
         return options
