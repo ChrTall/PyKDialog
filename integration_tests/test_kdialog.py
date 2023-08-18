@@ -172,11 +172,13 @@ def test_msg_box(kdialog):
 
 def test_input_box(kdialog):
     # act
-    res = kdialog.input_box("Don´t change the initial input and click Ok", "test input", exit_on_error=True, exit_msg="Follow the test instructions!")
+    res = kdialog.input_box("Don´t change the initial input and click Ok", "test input", exit_on_error=True,
+                            exit_msg="Follow the test instructions!")
     # assert
     assert res == "test input"
     # act
-    res = kdialog.input_box("Don´t enter input and click Ok", exit_on_error=True, exit_msg="Follow the test instructions!")
+    res = kdialog.input_box("Don´t enter input and click Ok", exit_on_error=True,
+                            exit_msg="Follow the test instructions!")
     # assert
     assert res == ""
     # act
@@ -205,7 +207,8 @@ def test_img_input_box(kdialog):
 
 def test_password(kdialog):
     # act
-    res = kdialog.password("Enter new password and click Ok. password=test-pwd", exit_on_error=True, exit_msg="Follow the test instructions!")
+    res = kdialog.password("Enter new password and click Ok. password=test-pwd", exit_on_error=True,
+                           exit_msg="Follow the test instructions!")
     # assert
     assert res == "test-pwd"
     # act
@@ -216,10 +219,10 @@ def test_password(kdialog):
         kdialog.password("Close Dialog")
 
 
-
 def test_new_password(kdialog):
     # act
-    res = kdialog.new_password("Enter new password and click Ok. password=test-pwd", exit_on_error=True, exit_msg="Follow the test instructions!")
+    res = kdialog.new_password("Enter new password and click Ok. password=test-pwd", exit_on_error=True,
+                               exit_msg="Follow the test instructions!")
     # assert
     assert res == "test-pwd"
     # act
@@ -273,9 +276,23 @@ def test_text_input_box(kdialog):
     with pytest.raises(subprocess.CalledProcessError) as exception_info:
         kdialog.text_input_box("Close Dialog", "")
 
-def test_combo_box(kdialog):
-    # arrange
-    res = kdialog.combo_box("Enter")
-    # act
 
+def test_combo_box(kdialog):
+    # act
+    res = kdialog.combo_box("Chose the first item", ["Item 1", "Item 2"], True, "Follow the test instructions!")
     # assert
+    assert res == "Item 1"
+    # act
+    res = kdialog.combo_box("Chose the second item", ["Item 1", "Item 2"], True, "Follow the test instructions!")
+    # assert
+    assert res == "Item 2"
+    # act
+    res = kdialog.combo_box("Select no item", ["Item 1", "Item 2"], True, "Follow the test instructions!")
+    # assert
+    assert res == ""
+    # act & assert
+    with pytest.raises(subprocess.CalledProcessError) as exception_info:
+        kdialog.combo_box("Click Cancel", ["Item 1", "Item 2"])
+    # act & assert
+    with pytest.raises(subprocess.CalledProcessError) as exception_info:
+        kdialog.combo_box("Close the dialog", ["Item 1", "Item 2"])

@@ -380,18 +380,39 @@ class KDialog(object):
         :type exit_msg: str
         :return: the multi-line string or a list of lines.
         :rtype: Union[str, list]
+        :raises: subprocess.CalledProcessError: if the dialog is closed or the user clicked on cancel.
         """
         self.kdialog_command = KDialogCommandBuilder(KDialogCommand.TEXT_INPUT_BOX, [heading, init_value])
         if exit_msg == "" and exit_on_error:
             exit_msg = "Program aborted: You must enter a value"
         return self.__get_multi_line_str(self.__invoke_cmd_with_return_value(exit_on_error, exit_msg), res_as_list)
 
-    def combo_box(self, description: str, selectable_items: list):
+    def combo_box(self, description: str, selectable_items: list, exit_on_error: bool = False, exit_msg: str = ""):
+        """
+        | Opens a Combobox list to choose a value.
+        | If the user chooses no value and clicks OK an empty string is returned.
+        | Otherwise the selected item is returned.
+        :param description: Details about what the combobox lets the user choose.
+        :type description: str
+        :param selectable_items: string list of items that can be chosen.
+        :type selectable_items: list
+        :param exit_on_error: default=False, instead-of-raising CalledProcessError an error dialog is shown,
+            and the program exits with status 1
+        :type exit_on_error: bool
+        :param exit_msg: if exit_on_error=True,
+            optionally customize the error msg that is displayed to the user.
+        :type exit_msg: str
+        :return: the selected item or an empty string if no value was selected.
+        :rtype: str
+        :raises: subprocess.CalledProcessError: if the dialog is closed or the user clicked on cancel.
+        """
+        if exit_msg == "" and exit_on_error:
+            exit_msg = "Program aborted: You choose and click OK."
         arg_arr = [description]
         for item in selectable_items:
             arg_arr.append(item)
         self.kdialog_command = KDialogCommandBuilder(KDialogCommand.COMBO_BOX, arg_arr)
-        return self
+        return self.__get_single_line_str(self.__invoke_cmd_with_return_value(exit_on_error, exit_msg))
 
     def menu(self, description: str, menu_items: list):
         arg_arr = [description]
